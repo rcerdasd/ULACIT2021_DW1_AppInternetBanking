@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<edmx:Edmx Version="3.0" xmlns:edmx="http://schemas.microsoft.com/ado/2009/11/edmx">
+ <!-- EF Designer content (DO NOT EDIT MANUALLY BELOW HERE) -->
+  <edmx:Designer xmlns="http://schemas.microsoft.com/ado/2009/11/edmx">
+    <!-- Diagram content (shape and connector positions) -->
+    <edmx:Diagrams>
+      <Diagram DiagramId="df8c7ec082f04af280c42149b021a752" Name="Diagram1" ZoomLevel="74">
+        <EntityTypeShape EntityType="INTERNET_BANKIN_ULACIT_DWModel.Cuenta" Width="1.5" PointX="3" PointY="5" IsExpanded="true" />
+        <EntityTypeShape EntityType="INTERNET_BANKIN_ULACIT_DWModel.Error" Width="1.5" PointX="3" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="INTERNET_BANKIN_ULACIT_DWModel.Estadistica" Width="1.5" PointX="3" PointY="12.375" IsExpanded="true" />
+        <EntityTypeShape EntityType="INTERNET_BANKIN_ULACIT_DWModel.Moneda" Width="1.5" PointX="0.75" PointY="4.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="INTERNET_BANKIN_ULACIT_DWModel.Pago" Width="1.5" PointX="7.625" PointY="3.625" IsExpanded="true" />
+        <EntityTypeShape EntityType="INTERNET_BANKIN_ULACIT_DWModel.Servicio" Width="1.5" PointX="3" PointY="1.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="INTERNET_BANKIN_ULACIT_DWModel.Sesion" Width="1.5" PointX="3" PointY="15.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="INTERNET_BANKIN_ULACIT_DWModel.sysdiagrams" Width="1.5" PointX="5.75" PointY="0.75" IsExpanded="true" />
+        <EntityTypeShape EntityType="INTERNET_BANKIN_ULACIT_DWModel.Transferencia" Width="1.5" PointX="5.25" PointY="8.875" IsExpanded="true" />
+        <EntityTypeShape EntityType="INTERNET_BANKIN_ULACIT_DWModel.Usuario" Width="1.5" PointX="0.75" PointY="8" IsExpanded="true" />
+        <AssociationConnector Association="INTERNET_BANKIN_ULACIT_DWModel.FK_Cuenta_Moneda" ManuallyRouted="false" />
+        <AssociationConnector Association="INTERNET_BANKIN_ULACIT_DWModel.FK_Cuenta_Usuario" ManuallyRouted="false" />
+        <AssociationConnector Association="INTERNET_BANKIN_ULACIT_DWModel.FK_Pago_Cuenta" ManuallyRouted="false" />
+        <AssociationConnector Association="INTERNET_BANKIN_ULACIT_DWModel.FK_Transferencia_Cuenta" ManuallyRouted="false" />
+        <AssociationConnector Association="INTERNET_BANKIN_ULACIT_DWModel.FK_Error_Usuario" ManuallyRouted="false" />
+        <AssociationConnector Association="INTERNET_BANKIN_ULACIT_DWModel.FK_Estadistica_Usuario" ManuallyRouted="false" />
+        <AssociationConnector Association="INTERNET_BANKIN_ULACIT_DWModel.FK_Pago_Moneda" ManuallyRouted="false" />
+        <AssociationConnector Association="INTERNET_BANKIN_ULACIT_DWModel.FK_Pago_Servicio" ManuallyRouted="false" />
+        <AssociationConnector Association="INTERNET_BANKIN_ULACIT_DWModel.FK_Sesion_Usuario" ManuallyRouted="false" />
+      </Diagram>
+    </edmx:Diagrams>
+  </edmx:Designer>
+</edmx:Edmx>

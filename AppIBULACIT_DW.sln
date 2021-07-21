@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.30517.126
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WebApiSegura", "WebApiSegura\WebApiSegura.csproj", "{8C28B908-C244-481C-B10B-F48CC7D0AD17}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppIBULACIT", "AppIBULACIT\AppIBULACIT.csproj", "{F5030CED-985B-4DAB-BEA8-AF3B9081F0DE}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8C28B908-C244-481C-B10B-F48CC7D0AD17} = {8C28B908-C244-481C-B10B-F48CC7D0AD17}
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8C28B908-C244-481C-B10B-F48CC7D0AD17}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8C28B908-C244-481C-B10B-F48CC7D0AD17}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8C28B908-C244-481C-B10B-F48CC7D0AD17}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8C28B908-C244-481C-B10B-F48CC7D0AD17}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F5030CED-985B-4DAB-BEA8-AF3B9081F0DE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F5030CED-985B-4DAB-BEA8-AF3B9081F0DE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F5030CED-985B-4DAB-BEA8-AF3B9081F0DE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F5030CED-985B-4DAB-BEA8-AF3B9081F0DE}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E766C051-E185-43A4-B5D6-F415834050A7}
+	EndGlobalSection
+EndGlobal
