@@ -13,6 +13,7 @@ namespace AppIBULACIT.Controllers
     public class CuentaManager
     {
         string UrlBase = "http://localhost:49220/api/Cuenta/";
+        string UrlCuentasCliente = "http://localhost:49220/api/CuentasCliente/"; 
 
         HttpClient GetClient(string token)
         {
@@ -42,11 +43,11 @@ namespace AppIBULACIT.Controllers
             return JsonConvert.DeserializeObject<IEnumerable<Cuenta>>(response);
         }
 
-        public async Task<IEnumerable<Cuenta>> ObtenerCuentasUsuario(string token)
+        public async Task<IEnumerable<Cuenta>> ObtenerCuentasUsuario(string token, string codigoUsuario)
         {
             HttpClient httpClient = GetClient(token);
 
-            var response = await httpClient.GetStringAsync(string.Concat(UrlBase,"/Cliente"));
+            var response = await httpClient.GetStringAsync(string.Concat(UrlCuentasCliente, codigoUsuario));
 
             return JsonConvert.DeserializeObject<IEnumerable<Cuenta>>(response);
         }

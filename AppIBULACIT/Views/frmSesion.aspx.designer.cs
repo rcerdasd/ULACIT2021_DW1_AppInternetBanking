@@ -7,10 +7,9 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-
-namespace AppIBULACIT.Views
-{
-    public partial class frmSesion
-    {
+namespace AppIBULACIT.Views {
+    
+    
+    public partial class frmSesion {
     }
 }

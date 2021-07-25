@@ -41,7 +41,7 @@ namespace AppIBULACIT.Views
         {
             try
             {
-                cuentas = await cuentaManager.ObtenerCuentasUsuario(Session["Token"].ToString());
+                cuentas = await cuentaManager.ObtenerCuentasUsuario(Session["Token"].ToString(),Session["CodigoUsuario"].ToString());
                 gvCuentas.DataSource = cuentas.ToList();
                 gvCuentas.DataBind();
             }

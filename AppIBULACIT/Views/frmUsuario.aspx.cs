@@ -158,6 +158,15 @@ namespace AppIBULACIT.Views
         {
             try
             {
+                txtCodigoMant.Text = string.Empty;
+                txtIdentificacion.Text = string.Empty;
+                txtNombre.Text = string.Empty;
+                txtUsername.Text = string.Empty;
+                txtPassword.Text = string.Empty;
+                txtEmail.Text = string.Empty;
+                txtFechaNac.Text = string.Empty;
+                ddlEstadoMant.SelectedIndex = 0;
+
                 IngresarEstadistica("btnNuevo_Click");
 
                 ltrTituloMantenimiento.Text = "Nuevo usuario";

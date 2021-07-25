@@ -20,7 +20,8 @@ namespace WebApiSegura.Controllers
             Cuenta cuenta = new Cuenta();
             try
             {
-                using (SqlConnection sqlConnection = new 
+
+                using (SqlConnection sqlConnection = new
                     SqlConnection(ConfigurationManager.ConnectionStrings["INTERNET_BANKING"].ConnectionString))
                 {
                     SqlCommand sqlCommand = new SqlCommand(@"SELECT Codigo, CodigoUsuario, CodigoMoneda, 
@@ -28,13 +29,13 @@ namespace WebApiSegura.Controllers
                                                              FROM   Cuenta
                                                              WHERE Codigo = @Codigo", sqlConnection);
 
-                    sqlCommand.Parameters.AddWithValue("@Codigo",id);
+                    sqlCommand.Parameters.AddWithValue("@Codigo", id);
 
                     sqlConnection.Open();
 
                     SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
 
-                    while(sqlDataReader.Read())
+                    while (sqlDataReader.Read())
                     {
                         cuenta.Codigo = sqlDataReader.GetInt32(0);
                         cuenta.CodigoUsuario = sqlDataReader.GetInt32(1);
@@ -95,47 +96,6 @@ namespace WebApiSegura.Controllers
             return Ok(cuentas);
         }
 
-        [HttpGet]
-        [Route("Cliente")]
-        public IHttpActionResult GetAllClientAccounts(int codigoUsuario)
-        {
-            List<Cuenta> cuentas = new List<Cuenta>();
-            try
-            {
-                using (SqlConnection sqlConnection = new
-                    SqlConnection(ConfigurationManager.ConnectionStrings["INTERNET_BANKING"].ConnectionString))
-                {
-                    SqlCommand sqlCommand = new SqlCommand(@"SELECT Codigo, CodigoUsuario, CodigoMoneda, 
-                                                             Descripcion, IBAN, Saldo, Estado
-                                                             FROM  Cuenta
-                                                             WHERE CodigoUsuario = @CodigoUsuario", sqlConnection);
-                    sqlCommand.Parameters.AddWithValue("@CodigoUsuario", codigoUsuario);
-                    sqlConnection.Open();
-
-                    SqlDataReader sqlDataReader = sqlCommand.ExecuteReader();
-
-                    while (sqlDataReader.Read())
-                    {
-                        Cuenta cuenta = new Cuenta();
-                        cuenta.Codigo = sqlDataReader.GetInt32(0);
-                        cuenta.CodigoUsuario = sqlDataReader.GetInt32(1);
-                        cuenta.CodigoMoneda = sqlDataReader.GetInt32(2);
-                        cuenta.Descripcion = sqlDataReader.GetString(3);
-                        cuenta.IBAN = sqlDataReader.GetString(4);
-                        cuenta.Saldo = sqlDataReader.GetDecimal(5);
-                        cuenta.Estado = sqlDataReader.GetString(6);
-
-                        cuentas.Add(cuenta);
-                    }
-                    sqlConnection.Close();
-                }
-            }
-            catch (Exception ex)
-            {
-                return InternalServerError(ex);
-            }
-            return Ok(cuentas);
-        }
 
         [HttpPost]
         public IHttpActionResult Ingresar(Cuenta cuenta)
@@ -145,10 +105,10 @@ namespace WebApiSegura.Controllers
 
             try
             {
-                using (SqlConnection sqlConnection = 
+                using (SqlConnection sqlConnection =
                     new SqlConnection(ConfigurationManager.ConnectionStrings["INTERNET_BANKING"].ConnectionString))
                 {
-                    SqlCommand sqlCommand = 
+                    SqlCommand sqlCommand =
                         new SqlCommand(@" INSERT INTO Cuenta (CodigoUsuario, CodigoMoneda, Descripcion, 
                                                                 IBAN, Saldo, Estado) 
                                          VALUES (@CodigoUsuario, @CodigoMoneda, @Descripcion, @IBAN, @Saldo, @Estado)",
@@ -236,7 +196,7 @@ namespace WebApiSegura.Controllers
                         new SqlCommand(@" DELETE Cuenta WHERE Codigo = @Codigo",
                                          sqlConnection);
 
-                    sqlCommand.Parameters.AddWithValue("@Codigo",id);
+                    sqlCommand.Parameters.AddWithValue("@Codigo", id);
 
                     sqlConnection.Open();
 

@@ -61,7 +61,7 @@
                 </div>
                 <div class="modal-body">
                     <p>
-                        <asp:Literal ID="ltrModalMensaje" runat="server" /><asp:Label ID="lblCodigoEliminar" runat="server" />
+                        <asp:Literal ID="ltrModalMensaje" runat="server" /><asp:Label ID="lblCodigoEliminar" Visible="false" runat="server" />
                     </p>
                 </div>
                 <div class="modal-footer">
