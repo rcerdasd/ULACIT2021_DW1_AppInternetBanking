@@ -3,6 +3,7 @@ using AppIBULACIT.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
@@ -102,6 +103,7 @@ namespace AppIBULACIT.Views
 
         }
 
+
         protected async void gvCuentas_RowCommand(object sender, GridViewCommandEventArgs e)
         {
             try
@@ -113,12 +115,16 @@ namespace AppIBULACIT.Views
                 {
                     case "Modificar":
                         IngresarEstadistica("gvCuentas_RowCommand modificar");
+
                         ddlEstadoMant.Enabled = true;
                         monedas = await monedaManager.ObtenerMonedas(Session["Token"].ToString());
+
+                        
 
                         ddlCodigoMoneda.DataSource = monedas.ToList();
                         ddlCodigoMoneda.DataTextField = "Descripcion";
                         ddlCodigoMoneda.DataValueField = "Codigo";
+
                         ddlCodigoMoneda.DataBind();
 
                         ddlCodigoMoneda.SelectedValue = row.Cells[2].Text.Trim();
@@ -176,6 +182,10 @@ namespace AppIBULACIT.Views
                 IngresarEstadistica("btnNuevo_Click");
 
                 monedas = await monedaManager.ObtenerMonedas(Session["Token"].ToString());
+
+                var monedasActivas = (from m in monedas
+                                      where m.Estado.ToUpper() != "I"
+                                      select m).ToList();
 
                 ddlCodigoMoneda.DataSource = monedas.ToList();
                 ddlCodigoMoneda.DataTextField = "Descripcion";
@@ -306,34 +316,53 @@ namespace AppIBULACIT.Views
                 else//Modificar
                 {
                     IngresarEstadistica("btnAceptarMant_Click modificar");
-                    Cuenta cuenta = new Cuenta()
+
+                    monedas = await monedaManager.ObtenerMonedas(Session["Token"].ToString());
+
+                    var monedaActiva = (from m in monedas
+                                          where m.Codigo.ToString().Equals(ddlCodigoMoneda.SelectedValue.ToString())
+                                          select m).ToList();
+
+                    if (monedaActiva[0].Estado.ToUpper().Equals("A"))
                     {
-                        Codigo = Convert.ToInt32(txtCodigoMant.Text),
-                        CodigoUsuario = Convert.ToInt32(txtCodigoUsuario.Text),
-                        CodigoMoneda = Convert.ToInt32(ddlCodigoMoneda.SelectedValue),
-                        Descripcion = txtDescripcion.Text,
-                        IBAN = txtIban.Text,
-                        Saldo = Convert.ToDecimal(txtSaldo.Text),
-                        Estado = ddlEstadoMant.SelectedValue
-                    };
+                        Cuenta cuenta = new Cuenta()
+                        {
+                            Codigo = Convert.ToInt32(txtCodigoMant.Text),
+                            CodigoUsuario = Convert.ToInt32(txtCodigoUsuario.Text),
+                            CodigoMoneda = Convert.ToInt32(ddlCodigoMoneda.SelectedValue),
+                            Descripcion = txtDescripcion.Text,
+                            IBAN = txtIban.Text,
+                            Saldo = Convert.ToDecimal(txtSaldo.Text),
+                            Estado = ddlEstadoMant.SelectedValue
+                        };
 
 
-                    Cuenta cuentaIntresada = await cuentaManager.Actualizar(cuenta, Session["Token"].ToString());
+                        Cuenta cuentaIntresada = await cuentaManager.Actualizar(cuenta, Session["Token"].ToString());
 
-                    if (!string.IsNullOrEmpty(cuentaIntresada.Descripcion))
-                    {
-                        lblResultado.Text = "Cuenta actualizada con exito";
-                        lblResultado.Visible = true;
-                        lblResultado.ForeColor = Color.Green;
-                        btnAceptarMant.Visible = false;
-                        InicializarControles();
+                        if (!string.IsNullOrEmpty(cuentaIntresada.Descripcion))
+                        {
+                            lblResultado.Text = "Cuenta actualizada con exito";
+                            lblResultado.Visible = true;
+                            lblResultado.ForeColor = Color.Green;
+                            btnAceptarMant.Visible = false;
+                            InicializarControles();
+                        }
+                        else
+                        {
+                            lblResultado.Text = "Hubo un error al efectuar la operacion";
+                            lblResultado.Visible = true;
+                            lblResultado.ForeColor = Color.Maroon;
+                        }
                     }
                     else
                     {
-                        lblResultado.Text = "Hubo un error al efectuar la operacion";
+                        lblResultado.Text = "La moneda seleccionada esta inactiva. Por favor, seleccione otra.";
                         lblResultado.Visible = true;
                         lblResultado.ForeColor = Color.Maroon;
+                        ScriptManager.RegisterStartupScript(this, this.GetType(), "LaunchServerSide", "$(function() {openModalMantenimiento(); } );", true);
                     }
+
+                    
                 }
             }
             catch (Exception ex)

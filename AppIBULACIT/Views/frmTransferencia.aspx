@@ -32,7 +32,7 @@
     <h1>
         <asp:Label Text="Mantenimiento de transferencias" runat="server"></asp:Label></h1>
     <input id="myInput" placeholder="Buscar" class="form-control" type="text" />
-    <asp:GridView ID="gvTransferencias" OnRowCommand="gvTransferencias_RowCommand" runat="server" AutoGenerateColumns="False"
+    <asp:GridView ID="gvTransferencias" runat="server" AutoGenerateColumns="False"
         CssClass="table table-sm" HeaderStyle-CssClass="thead-dark" HeaderStyle-BackColor="#243054"
         HeaderStyle-ForeColor="White" AlternatingRowStyle-BackColor="LightBlue" Width="100%">
         <Columns>
@@ -42,9 +42,6 @@
             <asp:BoundField HeaderText="FechaHora" DataField="FechaHora" ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Left" />
             <asp:BoundField HeaderText="Descripcion" DataField="Descripcion" ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Left" />
             <asp:BoundField HeaderText="Monto" DataField="Monto" ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Left" />
-            <asp:BoundField HeaderText="Estado" DataField="Estado" ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Left" />
-            <asp:ButtonField HeaderText="Modificar" CommandName="Modificar" ControlStyle-CssClass="btn btn-primary" ButtonType="Button" Text="Modificar" />
-            <asp:ButtonField HeaderText="Eliminar" CommandName="Eliminar" ControlStyle-CssClass="btn btn-danger" ButtonType="Button" Text="Eliminar" />
         </Columns>
     </asp:GridView>
     <asp:LinkButton type="button" OnClick="btnNuevo_Click" ValidationGroup="vg1" CssClass="btn btn-success" ID="btnNuevo" runat="server" Text="<span aria-hidden='true' class='glyphicon glyphicon-floppy-disk'></span> Nuevo" />
@@ -92,8 +89,8 @@
                             <td>
                                 <asp:Literal ID="ltrCuentaOrigen" Text="CuentaOrigen" runat="server" /></td>
                             <td>
-                                <asp:TextBox ID="txtCuentaOrigen" Enabled="true" runat="server" CssClass="form-control" />
-                                 <asp:RequiredFieldValidator ControlToValidate="txtCuentaOrigen" ID="rfvCuentaOrigen" runat="server" ErrorMessage="Esta informacion es necesaria"></asp:RequiredFieldValidator>
+                                <asp:DropDownList ID="ddlCuentaOrigen" runat="server"></asp:DropDownList>
+                                 <asp:RequiredFieldValidator ControlToValidate="ddlCuentaOrigen" ID="rfvCuentaOrigen" runat="server" ErrorMessage="Esta informacion es necesaria"></asp:RequiredFieldValidator>
                             </td>
                         </tr>
 
@@ -106,13 +103,12 @@
                                                                  <asp:RequiredFieldValidator ControlToValidate="txtCuentaDestino" ID="rfvCuentaDestino" runat="server" ErrorMessage="Esta informacion es necesaria"></asp:RequiredFieldValidator>
                             </td>
                         </tr>
-
-                        <tr>
+                                                <tr>
                             <td>
-                                <asp:Literal ID="ltrFechaHora" Text="Fecha hora" runat="server" /></td>
+                                <asp:Literal ID="ltrFechaHora" Visible="true" Text="Fecha y hora" runat="server" /></td>
                             <td>
-                                <asp:TextBox ID="txtFechaHora" runat="server" CssClass="form-control" />
-                                <asp:RequiredFieldValidator ControlToValidate="txtFechaHora" ID="rfvFechaHora" runat="server" ErrorMessage="Esta informacion es necesaria"></asp:RequiredFieldValidator>
+                                <asp:TextBox ID="txtFechaHora" Enabled="false" runat="server" CssClass="form-control" />
+                                                                 <asp:RequiredFieldValidator ControlToValidate="txtFechaHora" ID="rfvFechaHora" runat="server" ErrorMessage="Esta informacion es necesaria"></asp:RequiredFieldValidator>
                             </td>
                         </tr>
                         <tr>
@@ -130,18 +126,6 @@
                                 <asp:TextBox ID="txtMonto" runat="server" ValidationGroup="vg1" CssClass="form-control" />
                                 <asp:RequiredFieldValidator ControlToValidate="txtMonto" ID="rfvSAldo" runat="server" ErrorMessage="El saldo es necesario"></asp:RequiredFieldValidator>
                                 <asp:RegularExpressionValidator ControlToValidate="txtMonto" ValidationExpression="^[1-9]\d*(\.\d+)?$" ID="revSaldo" runat="server" ErrorMessage="Solo se pueden ingresar valores numericos"></asp:RegularExpressionValidator>
-                            </td>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <asp:Literal Text="Estado" runat="server" /></td>
-                            <td>
-                                <asp:DropDownList ID="ddlEstadoMant" CssClass="form-control" runat="server">
-                                    <asp:ListItem Value="A">Activo</asp:ListItem>
-                                    <asp:ListItem Value="I">Inactivo</asp:ListItem>
-                                </asp:DropDownList>
-
                             </td>
                         </tr>
                     </table>

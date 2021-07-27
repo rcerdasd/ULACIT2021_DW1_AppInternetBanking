@@ -218,6 +218,11 @@ namespace AppIBULACIT.Views
                 error.Descripcion = ex.Message;
 
                 Error errorIngresado = await errorManager.Ingresar(error);
+
+                ltrModalMensaje.Text = "No se pudo eliminar la moneda";
+
+                btnAceptarModal.Visible = false;
+                ScriptManager.RegisterStartupScript(this, this.GetType(), "LaunchServerSide", "$(function() { openModal(); } );", true);
             }
         }
 

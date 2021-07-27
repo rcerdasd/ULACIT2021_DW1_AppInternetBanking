@@ -31,7 +31,7 @@
     <h1>
         <asp:Label Text="Mantenimiento de errores" runat="server"></asp:Label></h1>
     <input id="myInput" placeholder="Buscar" class="form-control" type="text" />
-    <asp:GridView ID="gvErrors" OnRowCommand="gvErrors_RowCommand" runat="server" AutoGenerateColumns="False"
+    <asp:GridView ID="gvErrors" runat="server" AutoGenerateColumns="False"
         CssClass="table table-sm" HeaderStyle-CssClass="thead-dark" HeaderStyle-BackColor="#243054"
         HeaderStyle-ForeColor="White" AlternatingRowStyle-BackColor="LightBlue" Width="100%">
         <Columns>
@@ -43,8 +43,7 @@
             <asp:BoundField HeaderText="Descripcion" DataField="Descripcion" ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Left" />
             <asp:BoundField HeaderText="Vista" DataField="Vista" ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Left" />
             <asp:BoundField HeaderText="Accion" DataField="Accion" ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Left" />
-            <asp:ButtonField HeaderText="Modificar" CommandName="Modificar" ControlStyle-CssClass="btn btn-primary" ButtonType="Button" Text="Modificar" />
-            <asp:ButtonField HeaderText="Eliminar" CommandName="Eliminar" ControlStyle-CssClass="btn btn-danger" ButtonType="Button" Text="Eliminar" />
+
         </Columns>
     </asp:GridView>
     <asp:LinkButton type="button" OnClick="btnNuevo_Click" CssClass="btn btn-success" ValidationGroup="vg1" ID="btnNuevo" runat="server" Text="<span aria-hidden='true' class='glyphicon glyphicon-floppy-disk'></span> Nuevo" />
@@ -98,7 +97,7 @@
 
                         <tr>
                             <td>
-                                <asp:Literal ID="ltrFechaHora" Text="Codigo moneda" runat="server" /></td>
+                                <asp:Literal ID="ltrFechaHora" Text="Fecha y hora" runat="server" /></td>
                             <td>
                                 <asp:TextBox ID="txtFechaHora" runat="server" CausesValidation="true" ValidationGroup="vg1" CssClass="form-control" />
                                 <asp:RequiredFieldValidator ControlToValidate="txtFechaHora" ID="RequiredFieldValidator1" runat="server" ErrorMessage="Esta informacion es necesaria"></asp:RequiredFieldValidator>

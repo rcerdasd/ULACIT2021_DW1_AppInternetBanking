@@ -18,7 +18,10 @@ namespace AppIBULACIT.Views
         PagoManager pagoManager = new PagoManager();
 
         ServicioManager servicioManager = new ServicioManager();
-        IEnumerable<Servicio> monedas = new ObservableCollection<Servicio>();
+        IEnumerable<Servicio> servicios = new ObservableCollection<Servicio>();
+
+        CuentaManager cuentaManager = new CuentaManager();
+        IEnumerable<Cuenta> cuentas = new ObservableCollection<Cuenta>();
 
 
         protected void Page_Load(object sender, EventArgs e)
@@ -31,7 +34,6 @@ namespace AppIBULACIT.Views
                 {
                     InicializarControles();
                 }
-
             }
         }
 
@@ -42,6 +44,19 @@ namespace AppIBULACIT.Views
                 pagos = await pagoManager.ObtenerPagos(Session["Token"].ToString());
                 gvPagos.DataSource = pagos.ToList();
                 gvPagos.DataBind();
+
+                cuentas = await cuentaManager.ObtenerCuentasUsuario(Session["Token"].ToString(), Session["CodigoUsuario"].ToString());
+                ddlCuenta.DataSource = cuentas.ToList();
+                ddlCuenta.DataTextField = "IBAN";
+                ddlCuenta.DataValueField = "Codigo";               
+                ddlCuenta.DataBind();
+
+                servicios = await servicioManager.ObtenerServicios(Session["Token"].ToString());
+                ddlCodigoServicio.DataSource = servicios.ToList();
+                ddlCodigoServicio.DataTextField = "Descripcion";
+                ddlCodigoServicio.DataValueField = "Codigo";
+                ddlCodigoServicio.DataBind();
+
             }
             catch (Exception ex)
             {
@@ -100,89 +115,26 @@ namespace AppIBULACIT.Views
 
         }
 
-        protected async void gvPagos_RowCommand(object sender, GridViewCommandEventArgs e)
-        {/*
-            try
-            {
-                int index = Convert.ToInt32(e.CommandArgument);
-                GridViewRow row = gvPagos.Rows[index];
-
-                switch (e.CommandName)
-                {
-                    case "Modificar":
-                        IngresarEstadistica("gvPagos_RowCommand modificar");
-
-                        ltrTituloMantenimiento.Text = "Modificar pago";
-                        btnAceptarMant.ControlStyle.CssClass = "btn btn-primary";
-                        txtCodigoMant.Text = row.Cells[0].Text.Trim();
-                        .Text = row.Cells[1].Text.Trim();
-                        txtDescripcion.Text = row.Cells[3].Text.Trim();
-                        txtIban.Text = row.Cells[4].Text.Trim();
-                        txtSaldo.Text = row.Cells[5].Text.Trim();
-                        if (row.Cells[6].Text.Trim().ToLower() == "a")
-                            ddlEstadoMant.SelectedIndex = 0;
-                        else
-                            ddlEstadoMant.SelectedIndex = 1;
-                        btnAceptarMant.Visible = true;
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "LaunchServerSide", "$(function() {openModalMantenimiento(); } );", true);
-                        break;
-                    case "Eliminar":
-                        IngresarEstadistica("gvPagos_RowCommand eliminar");
-                        btnAceptarModal.Visible = true;
-                        lblCodigoEliminar.Text = row.Cells[0].Text;
-                        ltrModalMensaje.Text = "Esta seguro que desea eliminar la pago #" + lblCodigoEliminar.Text + "?";
-                        btnAceptarModal.Visible = true;
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "LaunchServerSide", "$(function(){openModal(); } );", true);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-
-                ErrorManager errorManager = new ErrorManager();
-                Error error = new Error();
-                error.CodigoUsuario = Convert.ToInt32(Session["CodigoUsuario"].ToString());
-                error.FechaHora = DateTime.Now;
-                error.Vista = this.ToString();
-                error.Accion = "gvPagos_RowCommand()";
-                error.Fuente = ex.Source;
-                error.Numero = ex.HResult.ToString();
-                error.Descripcion = ex.Message;
-
-                lblStatus.Text = "Accion no identificada";
-                lblStatus.Visible = true;
-            }*/
+        protected void openModal(string message, bool btnAceptar)
+        {
+            btnAceptarModal.Visible = btnAceptar;
+            ltrModalMensaje.Text = message;
+            ltrModalMensaje.Visible = true;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "LaunchServerSide", "$(function(){openModal(); } );", true);
         }
 
-
-
         protected async void btnNuevo_Click(object sender, EventArgs e)
-        {/*
+        {
             try
             {
                 IngresarEstadistica("btnNuevo_Click");
 
-                monedas = await monedaManager.ObtenerMonedas(Session["Token"].ToString());
-
-                ddlCodigoMoneda.DataSource = monedas.ToList();
-                ddlCodigoMoneda.DataTextField = "Descripcion";
-                ddlCodigoMoneda.DataValueField = "Codigo";
-                ddlCodigoMoneda.DataBind();
-
-                ltrTituloMantenimiento.Text = "Nueva pago";
+                
+                ltrTituloMantenimiento.Text = "Nuevo pago";
                 btnAceptarMant.ControlStyle.CssClass = "btn btn-sucess";
                 btnAceptarMant.Visible = true;
                 ltrCodigoMant.Visible = true;
                 txtCodigoMant.Visible = true;
-                txtDescripcion.Visible = true;
-                ltrDescripcion.Visible = true;
-                ddlEstadoMant.Enabled = false;
-                ltrCodigoUsuario.Visible = true;
-                txtCodigoUsuario.Text = Session["CodigoUsuario"].ToString();
-                txtCodigoMant.Text = string.Empty;
-                txtDescripcion.Text = string.Empty;
                 ScriptManager.RegisterStartupScript(this,
                     this.GetType(), "LaunchServerSide", "$(function() {openModalMantenimiento(); } );", true);
             }
@@ -202,9 +154,8 @@ namespace AppIBULACIT.Views
                 };
                 Error errorIngresado = await errorManager.Ingresar(error);
 
-                lblStatus.Text = "Hubo un error al cargar el modal";
-                lblStatus.Visible = true;
-            }*/
+                openModal("No se pudo abrir el modal", false);
+            }
         }
 
         protected async void btnAceptarModal_Click(object sender, EventArgs e)
@@ -254,45 +205,50 @@ namespace AppIBULACIT.Views
         }
 
         protected async void btnAceptarMant_Click(object sender, EventArgs e)
-        {/*
+        {
             try
             {
+                Cuenta cuentaSeleccionada = await cuentaManager.ObtenerCuenta(Session["Token"].ToString(), ddlCuenta.SelectedValue);
 
                 if (string.IsNullOrEmpty(txtCodigoMant.Text))//Insertar
                 {
                     IngresarEstadistica("btnAceptarMant_Click ingresar");
                     Pago pago = new Pago()
                     {
-                        CodigoUsuario = Convert.ToInt32(txtCodigoUsuario.Text),
-                        CodigoMoneda = Convert.ToInt32(ddlCodigoMoneda.SelectedValue),
-                        Descripcion = txtDescripcion.Text,
-                        IBAN = txtIban.Text,
-                        Saldo = Convert.ToDecimal(txtSaldo.Text),
-                        Estado = ddlEstadoMant.SelectedValue
+                        CodigoServicio = Convert.ToInt32(ddlCodigoServicio.SelectedValue),
+                        CodigoCuenta = Convert.ToInt32(ddlCuenta.SelectedValue),
+                        CodigoMoneda = cuentaSeleccionada.CodigoMoneda,
+                        FechaHora = DateTime.Now,
+                        Monto = Convert.ToDecimal(txtMonto.Text.Trim())
                     };
 
-                    Pago pagoIngresada = await pagoManager.Ingresar(pago, Session["Token"].ToString());
+                    decimal montoEnCuenta = cuentaSeleccionada.Saldo;
 
-                    if (!string.IsNullOrEmpty(pagoIngresada.Descripcion))
+                    if (Convert.ToDecimal(txtMonto.Text.Trim()) <= montoEnCuenta)//la cuenta seleccionada tiene suficientes fondos
                     {
-                        lblResultado.Text = "Pago ingresada con exito";
-                        lblResultado.Visible = true;
-                        lblResultado.ForeColor = Color.Green;
-                        btnAceptarMant.Visible = false;
-                        InicializarControles();
+                        Pago pagoIngresada = await pagoManager.Ingresar(pago, Session["Token"].ToString());
 
-                        Correo correo = new Correo();
-                        correo.Enviar("Nueva pago incluida", pago.Descripcion, "testrolandocerdas@gmail.com", Convert.ToInt32(Session["CodigoUsuario"].ToString()), "Pago");
+                        if (pagoIngresada.FechaHora != null)
+                        {
+                            cuentaSeleccionada.Saldo = (montoEnCuenta - Convert.ToDecimal(txtMonto.Text.Trim()));
+                            Cuenta cuentaOrigenActualizada = await cuentaManager.Actualizar(cuentaSeleccionada, Session["Token"].ToString());
+                            openModal("Pago procesado con exito", false);
+                            InicializarControles();
+
+                        }
+                        else
+                        {
+                            openModal("No se pudo procesar el pago", false);
+
+                        }
                     }
                     else
                     {
-                        lblResultado.Text = "Hubo un error al efectuar la operacion";
-                        lblResultado.Visible = true;
-                        lblResultado.ForeColor = Color.Maroon;
+                        openModal("No hay suficiente saldo en la cuenta seleccionada para pagar el servicio", false);
 
                     }
                 }
-                else//Modificar
+                /*else//Modificar
                 {
                     IngresarEstadistica("btnAceptarMant_Click modificar");
                     Pago pago = new Pago()
@@ -323,7 +279,7 @@ namespace AppIBULACIT.Views
                         lblResultado.Visible = true;
                         lblResultado.ForeColor = Color.Maroon;
                     }
-                }
+                }*/
             }
             catch (Exception ex)
             {
@@ -340,8 +296,8 @@ namespace AppIBULACIT.Views
                     Descripcion = ex.Message
                 };
                 Error errorIngresado = await errorManager.Ingresar(error);
-
-            }*/
+                openModal("No se pudo procesar el pago", false);
+            }
         }
 
         protected void btnCancelarMant_Click(object sender, EventArgs e)

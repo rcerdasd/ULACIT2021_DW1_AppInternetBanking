@@ -17,10 +17,8 @@ namespace AppIBULACIT.Views
         IEnumerable<Transferencia> transferencias = new ObservableCollection<Transferencia>();
         TransferenciaManager transferenciaManager = new TransferenciaManager();
 
-        MonedaManager monedaManager = new MonedaManager();
-        IEnumerable<Moneda> monedas = new ObservableCollection<Moneda>();
-
-
+        IEnumerable<Cuenta> cuentas = new ObservableCollection<Cuenta>();
+        CuentaManager cuentaManager = new CuentaManager();
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -43,6 +41,12 @@ namespace AppIBULACIT.Views
                 transferencias = await transferenciaManager.ObtenerTransferencias(Session["Token"].ToString());
                 gvTransferencias.DataSource = transferencias.ToList();
                 gvTransferencias.DataBind();
+
+                cuentas = await cuentaManager.ObtenerCuentasUsuario(Session["Token"].ToString(), Session["CodigoUsuario"].ToString());
+                ddlCuentaOrigen.DataSource = cuentas.ToList();
+                ddlCuentaOrigen.DataTextField = "IBAN";
+                ddlCuentaOrigen.DataValueField = "Codigo";
+                ddlCuentaOrigen.DataBind();
             }
             catch (Exception ex)
             {
@@ -101,59 +105,12 @@ namespace AppIBULACIT.Views
 
         }
 
-        protected async void gvTransferencias_RowCommand(object sender, GridViewCommandEventArgs e)
+        protected void openModal(string message, bool btnAceptar)
         {
-            try
-            {
-                int index = Convert.ToInt32(e.CommandArgument);
-                GridViewRow row = gvTransferencias.Rows[index];
-
-                switch (e.CommandName)
-                {
-                    case "Modificar":
-                        IngresarEstadistica("gvTransferencias_RowCommand modificar");
-                        ddlEstadoMant.Enabled = true;
-                        monedas = await monedaManager.ObtenerMonedas(Session["Token"].ToString());
-                        ltrTituloMantenimiento.Text = "Modificar transferencia";
-                        btnAceptarMant.ControlStyle.CssClass = "btn btn-primary";
-                        txtCodigoMant.Text = row.Cells[0].Text.Trim();
-                        txtCuentaOrigen.Text = row.Cells[1].Text.Trim();
-                        txtCuentaDestino.Text = row.Cells[2].Text.Trim();
-                        txtFechaHora.Text = row.Cells[3].Text.Trim();
-                        txtDescripcion.Text = row.Cells[4].Text.Trim();
-                        txtMonto.Text = row.Cells[5].Text.Trim();
-                        ddlEstadoMant.SelectedValue = row.Cells[6].Text.Trim().ToUpper();
-
-                        btnAceptarMant.Visible = true;
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "LaunchServerSide", "$(function() {openModalMantenimiento(); } );", true);
-                        break;
-                    case "Eliminar":
-                        IngresarEstadistica("gvTransferencias_RowCommand eliminar");
-                        btnAceptarModal.Visible = true;
-                        lblCodigoEliminar.Text = row.Cells[0].Text;
-                        ltrModalMensaje.Text = "Esta seguro que desea eliminar la transferencia #" + lblCodigoEliminar.Text + "?";
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "LaunchServerSide", "$(function(){openModal(); } );", true);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-
-                ErrorManager errorManager = new ErrorManager();
-                Error error = new Error();
-                error.CodigoUsuario = Convert.ToInt32(Session["CodigoUsuario"].ToString());
-                error.FechaHora = DateTime.Now;
-                error.Vista = this.ToString();
-                error.Accion = "gvTransferencias_RowCommand()";
-                error.Fuente = ex.Source;
-                error.Numero = ex.HResult.ToString();
-                error.Descripcion = ex.Message;
-
-                lblStatus.Text = "Accion no identificada";
-                lblStatus.Visible = true;
-            }
+            btnAceptarModal.Visible = btnAceptar;
+            ltrModalMensaje.Text = message;
+            ltrModalMensaje.Visible = true;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "LaunchServerSide", "$(function(){openModal(); } );", true);
         }
 
 
@@ -163,8 +120,11 @@ namespace AppIBULACIT.Views
             try
             {
                 IngresarEstadistica("btnNuevo_Click");
-
-                monedas = await monedaManager.ObtenerMonedas(Session["Token"].ToString());
+                txtCodigoMant.Text = string.Empty;
+                txtCuentaDestino.Text = string.Empty;
+                txtMonto.Text = string.Empty;
+                ltrFechaHora.Visible = false;
+                txtFechaHora.Visible = false;
                 ltrTituloMantenimiento.Text = "Nueva transferencia";
                 btnAceptarMant.ControlStyle.CssClass = "btn btn-sucess";
                 btnAceptarMant.Visible = true;
@@ -172,7 +132,6 @@ namespace AppIBULACIT.Views
                 txtCodigoMant.Visible = true;
                 txtDescripcion.Visible = true;
                 ltrDescripcion.Visible = true;
-                ddlEstadoMant.Enabled = false;
                 txtCodigoMant.Text = string.Empty;
                 txtDescripcion.Text = string.Empty;
                 ScriptManager.RegisterStartupScript(this,
@@ -250,34 +209,56 @@ namespace AppIBULACIT.Views
                     IngresarEstadistica("btnAceptarMant_Click ingresar");
                     Transferencia transferencia = new Transferencia()
                     {
-                        CuentaOrigen = Convert.ToInt32(txtCuentaOrigen.Text),
+                        CuentaOrigen = Convert.ToInt32(ddlCuentaOrigen.SelectedValue),
                         CuentaDestino = Convert.ToInt32(txtCuentaDestino.Text),
-                        FechaHora = DateTime.Parse(txtFechaHora.Text, new CultureInfo("de-DE")),
+                        //FechaHora = DateTime.Parse(txtFechaHora.Text, new CultureInfo("de-DE")),
+                        FechaHora = DateTime.Now,
                         Descripcion = txtDescripcion.Text,
                         Monto = Convert.ToDecimal(txtMonto.Text),
-                        Estado = ddlEstadoMant.SelectedValue
+                        Estado = "1"
                     };
 
-                    Transferencia transferenciaIngresada = await transferenciaManager.Ingresar(transferencia, Session["Token"].ToString());
+                    Cuenta cuentaSeleccionada = await cuentaManager.ObtenerCuenta(Session["Token"].ToString(), ddlCuentaOrigen.SelectedValue);
 
-                    if (!string.IsNullOrEmpty(transferenciaIngresada.Descripcion))
+                    Cuenta cuentaDestino = await cuentaManager.ObtenerCuenta(Session["Token"].ToString(), txtCuentaDestino.Text.Trim());
+
+                    decimal montoEnCuenta = cuentaSeleccionada.Saldo;
+
+                    if (Convert.ToDecimal(txtMonto.Text.Trim()) <= montoEnCuenta)//la cuenta seleccionada tiene suficientes fondos
                     {
-                        lblResultado.Text = "Transferencia ingresada con exito";
-                        lblResultado.Visible = true;
-                        lblResultado.ForeColor = Color.Green;
-                        btnAceptarMant.Visible = false;
-                        InicializarControles();
+                        if (cuentaDestino.Descripcion != null)
+                        {
+                            Transferencia transferenciaIngresada = await transferenciaManager.Ingresar(transferencia, Session["Token"].ToString());
 
-                        Correo correo = new Correo();
-                        correo.Enviar("Nueva transferencia incluida", transferencia.Descripcion, "testrolandocerdas@gmail.com", Convert.ToInt32(Session["CodigoUsuario"].ToString()), "Transferencia");
+                            if (!string.IsNullOrEmpty(transferenciaIngresada.Descripcion))
+                            {
+                                cuentaSeleccionada.Saldo = (montoEnCuenta - Convert.ToDecimal(txtMonto.Text.Trim()));
+                                cuentaDestino.Saldo = (cuentaDestino.Saldo + Convert.ToDecimal(txtMonto.Text.Trim()));
+
+                                Cuenta cuentaOrigenActualizada = await cuentaManager.Actualizar(cuentaSeleccionada, Session["Token"].ToString());
+                                Cuenta cuentaDestinoActualizada = await cuentaManager.Actualizar(cuentaDestino, Session["Token"].ToString());
+                                openModal("Transferencia realizada con exito", false);
+                                InicializarControles();
+
+                                Correo correo = new Correo();
+                                correo.Enviar("Nueva transferencia incluida", transferencia.Descripcion, "testrolandocerdas@gmail.com", Convert.ToInt32(Session["CodigoUsuario"].ToString()), "Transferencia");
+                            }
+                            else
+                            {
+                                openModal("Error al realizar la transferencia", false);
+                            }
+                        }
+                        else
+                        {
+                            openModal("La cuenta de destino no existe", false);
+                        }
                     }
-                    else
+                    else//La cuenta no tiene sufientes fondos
                     {
-                        lblResultado.Text = "Hubo un error al efectuar la operacion";
-                        lblResultado.Visible = true;
-                        lblResultado.ForeColor = Color.Maroon;
-
+                        openModal("Error al realizar la transferencia: La cuenta no tiene suficientes fondos", false);
                     }
+
+
                 }
                 else//Modificar
                 {
@@ -285,12 +266,13 @@ namespace AppIBULACIT.Views
                     Transferencia transferencia = new Transferencia()
                     {
                         Codigo = Convert.ToInt32(txtCodigoMant.Text),
-                        CuentaOrigen = Convert.ToInt32(txtCuentaOrigen.Text),
+                        CuentaOrigen = Convert.ToInt32(ddlCuentaOrigen.Text),
                         CuentaDestino = Convert.ToInt32(txtCuentaDestino.Text),
-                        FechaHora = DateTime.Parse(txtFechaHora.Text, new CultureInfo("de-DE")),
+                        //FechaHora = DateTime.Parse(txtFechaHora.Text, new CultureInfo("de-DE")),
+                        FechaHora = DateTime.Parse(txtFechaHora.Text),
                         Descripcion = txtDescripcion.Text,
                         Monto = Convert.ToDecimal(txtMonto.Text),
-                        Estado = ddlEstadoMant.SelectedValue
+                        Estado = "1"
                     };
 
 
@@ -298,17 +280,13 @@ namespace AppIBULACIT.Views
 
                     if (!string.IsNullOrEmpty(transferenciaIntresada.Descripcion))
                     {
-                        lblResultado.Text = "Transferencia actualizada con exito";
-                        lblResultado.Visible = true;
-                        lblResultado.ForeColor = Color.Green;
-                        btnAceptarMant.Visible = false;
+                        openModal("Transferencia actualizada con exito", false);
                         InicializarControles();
                     }
                     else
                     {
-                        lblResultado.Text = "Hubo un error al efectuar la operacion";
-                        lblResultado.Visible = true;
-                        lblResultado.ForeColor = Color.Maroon;
+                        openModal("Error al modificar la transferencia", false);
+
                     }
                 }
             }

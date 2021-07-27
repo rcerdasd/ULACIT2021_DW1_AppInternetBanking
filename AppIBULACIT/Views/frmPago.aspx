@@ -1,6 +1,7 @@
 ﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" Async="true" AutoEventWireup="true" CodeBehind="frmPago.aspx.cs" Inherits="AppIBULACIT.Views.frmPago" %>
+
 <asp:Content ID="Content1" ContentPlaceHolderID="MainContent" runat="server">
-   <script type="text/javascript">
+    <script type="text/javascript">
 
         function openModal() {
             $('#myModal').modal('show'); //ventana de mensajes
@@ -26,12 +27,12 @@
                 });
             });
         });
-   </script>
+    </script>
 
     <h1>
         <asp:Label Text="Mantenimiento de pagos" runat="server"></asp:Label></h1>
     <input id="myInput" placeholder="Buscar" class="form-control" type="text" />
-    <asp:GridView ID="gvPagos" OnRowCommand="gvPagos_RowCommand" runat="server" AutoGenerateColumns="False"
+    <asp:GridView ID="gvPagos" runat="server" AutoGenerateColumns="False"
         CssClass="table table-sm" HeaderStyle-CssClass="thead-dark" HeaderStyle-BackColor="#243054"
         HeaderStyle-ForeColor="White" AlternatingRowStyle-BackColor="LightBlue" Width="100%">
         <Columns>
@@ -40,9 +41,8 @@
             <asp:BoundField HeaderText="CodigoCuenta" DataField="CodigoCuenta" ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Left" />
             <asp:BoundField HeaderText="CodigoMoneda" DataField="CodigoMoneda" ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Left" />
             <asp:BoundField HeaderText="FechaHora" DataField="FechaHora" ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Left" />
-            <asp:BoundField HeaderText="Monto" DataField="Monto" ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Left" />            
-            <asp:ButtonField HeaderText="Modificar" CommandName="Modificar" ControlStyle-CssClass="btn btn-primary" ButtonType="Button" Text="Modificar" />
-            <asp:ButtonField HeaderText="Eliminar" CommandName="Eliminar" ControlStyle-CssClass="btn btn-danger" ButtonType="Button" Text="Eliminar" />
+            <asp:BoundField HeaderText="Monto" DataField="Monto" ItemStyle-Wrap="false" ItemStyle-HorizontalAlign="Left" />
+
         </Columns>
     </asp:GridView>
     <asp:LinkButton type="button" OnClick="btnNuevo_Click" CssClass="btn btn-success" ValidationGroup="vg1" ID="btnNuevo" runat="server" Text="<span aria-hidden='true' class='glyphicon glyphicon-floppy-disk'></span> Nuevo" />
@@ -88,7 +88,7 @@
 
                         <tr>
                             <td>
-                                <asp:Literal ID="ltrCodigoServicio" Text="Codigo servicio" runat="server" /></td>
+                                <asp:Literal ID="ltrCodigoServicio" Text="Servicio" runat="server" /></td>
                             <td>
                                 <asp:DropDownList ID="ddlCodigoServicio" CssClass="form-control" runat="server">
                                 </asp:DropDownList>
@@ -97,29 +97,10 @@
 
                         <tr>
                             <td>
-                                <asp:Literal ID="ltrCodigoCuenta" Text="Codigo cuenta" runat="server" /></td>
+                                <asp:Literal ID="ltrCuenta" Text="Cuenta" runat="server" /></td>
                             <td>
-                                <asp:TextBox ID="txtCodigoCuenta" runat="server" CausesValidation="true" ValidationGroup="vg1" CssClass="form-control" />
-                                <asp:RequiredFieldValidator ControlToValidate="txtCodigoCuenta" ID="RequiredFieldValidator1" runat="server" PagoMessage="Esta informacion es necesaria"></asp:RequiredFieldValidator>
-                        </tr>
-
-                        <tr>
-                            <td>
-                                <asp:Literal ID="ltrCodigoMoneda" Text="CodigoMoneda" runat="server" />
-
-                            </td>
-                            <td>
-                                <asp:DropDownList ID="ddlMoneda" CssClass="form-control" runat="server">
+                                <asp:DropDownList ID="ddlCuenta" CssClass="form-control" runat="server">
                                 </asp:DropDownList>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                <asp:Literal ID="ltrFechahora" Text="Fecha hora" runat="server" /></td>
-                            <td>
-                                <asp:TextBox ID="txtFechaHora" runat="server" ValidationGroup="vg1" CssClass="form-control" />
-                                <asp:RequiredFieldValidator ControlToValidate="txtFechaHora" ID="rfvFechaHora" runat="server" PagoMessage="Esta informacion es necesaria"></asp:RequiredFieldValidator>
-                            </td>
                         </tr>
                         <tr>
                             <td>
@@ -129,7 +110,7 @@
                                 <asp:RequiredFieldValidator ControlToValidate="txtMonto" ID="RequiredFieldValidator2" runat="server" PagoMessage="Esta informacion es necesaria"></asp:RequiredFieldValidator>
                                 <asp:RegularExpressionValidator ControlToValidate="txtMonto" ValidationExpression="^[1-9]\d*(\.\d+)?$" ID="revSaldo" runat="server" ErrorMessage="Solo se pueden ingresar valores numericos"></asp:RegularExpressionValidator>
                             </td>
-                        </tr>                       
+                        </tr>
                     </table>
                     <asp:Label ID="lblResultado" ForeColor="Maroon" Visible="False" runat="server" />
                 </div>

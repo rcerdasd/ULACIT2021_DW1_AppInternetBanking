@@ -114,13 +114,13 @@ namespace AppIBULACIT.Views
         protected global::System.Web.UI.WebControls.Literal ltrCuentaOrigen;
 
         /// <summary>
-        /// txtCuentaOrigen control.
+        /// ddlCuentaOrigen control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtCuentaOrigen;
+        protected global::System.Web.UI.WebControls.DropDownList ddlCuentaOrigen;
 
         /// <summary>
         /// rfvCuentaOrigen control.
@@ -247,15 +247,6 @@ namespace AppIBULACIT.Views
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
         protected global::System.Web.UI.WebControls.RegularExpressionValidator revSaldo;
-
-        /// <summary>
-        /// ddlEstadoMant control.
-        /// </summary>
-        /// <remarks>
-        /// Auto-generated field.
-        /// To modify move field declaration from designer file to code-behind file.
-        /// </remarks>
-        protected global::System.Web.UI.WebControls.DropDownList ddlEstadoMant;
 
         /// <summary>
         /// lblResultado control.

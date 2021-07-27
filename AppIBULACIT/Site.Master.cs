@@ -29,17 +29,7 @@ namespace AppIBULACIT
 
         protected void lnkCerrarSesion_Click(object sender, EventArgs e)
         {
-            /*
-            SesionManager sesionManager = new SesionManager();
-            Sesion sesion = new Sesion();
-            sesion.CodigoUsuario = Convert.ToInt32(Session["CodigoUsuario"].ToString());
-            sesion.FechaInicio = Convert.ToDateTime(Session["FechaInicio"].ToString());
-            sesion.FechaExpiracion = DateTime.Now;
-            sesion.Estado = Session["Estado"].ToString();
-            sesion.CodigoSesion = Session.SessionID.ToString();
-
-            Sesion sesionIngresada = await sesionManager.Ingresar(sesion, Session["Token"].ToString());
-            */
+            
             Session.Abandon();
             FormsAuthentication.SignOut();
             Response.Redirect("~/Login.aspx");
