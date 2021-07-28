@@ -3,6 +3,7 @@ using AppIBULACIT.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Drawing;
 using System.Linq;
 using System.Web;
 using System.Web.UI;
@@ -29,6 +30,14 @@ namespace AppIBULACIT.Views
                 }
 
             }
+        }
+
+        protected void openModal(string message, bool btnAceptar)
+        {
+            btnAceptarModal.Visible = btnAceptar;
+            ltrModalMensaje.Text = message;
+            ltrModalMensaje.Visible = true;
+            ScriptManager.RegisterStartupScript(this, this.GetType(), "LaunchServerSide", "$(function(){openModal(); } );", true);
         }
 
         protected async void InicializarControles()
@@ -96,98 +105,27 @@ namespace AppIBULACIT.Views
 
         }
 
-        protected async void gvEstadisticas_RowCommand(object sender, GridViewCommandEventArgs e)
-        {/*
-            try
-            {
-                int index = Convert.ToInt32(e.CommandArgument);
-                GridViewRow row = gvEstadisticas.Rows[index];
-
-                switch (e.CommandName)
-                {
-                    case "Modificar":
-                        IngresarEstadistica("gvEstadisticas_RowCommand modificar");
-                        ddlEstadoMant.Enabled = true;
-                        monedas = await monedaManager.ObtenerMonedas(Session["Token"].ToString());
-
-                        ddlCodigoMoneda.DataSource = monedas.ToList();
-                        ddlCodigoMoneda.DataTextField = "Descripcion";
-                        ddlCodigoMoneda.DataValueField = "Codigo";
-                        ddlCodigoMoneda.DataBind();
-
-                        ddlCodigoMoneda.SelectedValue = row.Cells[2].Text.Trim();
-
-                        ltrTituloMantenimiento.Text = "Modificar estadistica";
-                        btnAceptarMant.ControlStyle.CssClass = "btn btn-primary";
-                        txtCodigoMant.Text = row.Cells[0].Text.Trim();
-                        txtCodigoUsuario.Text = row.Cells[1].Text.Trim();
-                        txtDescripcion.Text = row.Cells[3].Text.Trim();
-                        txtIban.Text = row.Cells[4].Text.Trim();
-                        txtSaldo.Text = row.Cells[5].Text.Trim();
-                        if (row.Cells[6].Text.Trim().ToLower() == "a")
-                            ddlEstadoMant.SelectedIndex = 0;
-                        else
-                            ddlEstadoMant.SelectedIndex = 1;
-                        btnAceptarMant.Visible = true;
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "LaunchServerSide", "$(function() {openModalMantenimiento(); } );", true);
-                        break;
-                    case "Eliminar":
-                        IngresarEstadistica("gvEstadisticas_RowCommand eliminar");
-                        btnAceptarModal.Visible = true;
-                        lblCodigoEliminar.Text = row.Cells[0].Text;
-                        ltrModalMensaje.Text = "Esta seguro que desea eliminar la estadistica #" + lblCodigoEliminar.Text + "?";
-                        btnAceptarModal.Visible = true;
-                        ScriptManager.RegisterStartupScript(this, this.GetType(), "LaunchServerSide", "$(function(){openModal(); } );", true);
-                        break;
-                    default:
-                        break;
-                }
-            }
-            catch (Exception ex)
-            {
-
-                ErrorManager errorManager = new ErrorManager();
-                Error error = new Error();
-                error.CodigoUsuario = Convert.ToInt32(Session["CodigoUsuario"].ToString());
-                error.FechaHora = DateTime.Now;
-                error.Vista = this.ToString();
-                error.Accion = "gvEstadisticas_RowCommand()";
-                error.Fuente = ex.Source;
-                error.Numero = ex.HResult.ToString();
-                error.Descripcion = ex.Message;
-
-                lblStatus.Text = "Accion no identificada";
-                lblStatus.Visible = true;
-            }*/
-        }
-
-
-
         protected async void btnNuevo_Click(object sender, EventArgs e)
-        {/*
+        {
             try
             {
                 IngresarEstadistica("btnNuevo_Click");
-
-                monedas = await monedaManager.ObtenerMonedas(Session["Token"].ToString());
-
-                ddlCodigoMoneda.DataSource = monedas.ToList();
-                ddlCodigoMoneda.DataTextField = "Descripcion";
-                ddlCodigoMoneda.DataValueField = "Codigo";
-                ddlCodigoMoneda.DataBind();
 
                 ltrTituloMantenimiento.Text = "Nueva estadistica";
                 btnAceptarMant.ControlStyle.CssClass = "btn btn-sucess";
                 btnAceptarMant.Visible = true;
                 ltrCodigoMant.Visible = true;
                 txtCodigoMant.Visible = true;
-                txtDescripcion.Visible = true;
-                ltrDescripcion.Visible = true;
-                ddlEstadoMant.Enabled = false;
                 ltrCodigoUsuario.Visible = true;
                 txtCodigoUsuario.Text = Session["CodigoUsuario"].ToString();
+                txtNavegador.Text = HttpContext.Current.Request.Browser.Browser;
+                txtPlataforma.Text = Environment.OSVersion.ToString();
+                txtFabricante.Text = Environment.MachineName;
                 txtCodigoMant.Text = string.Empty;
-                txtDescripcion.Text = string.Empty;
+                txtFechaHora.Text = DateTime.Now.ToString();
+                txtAccion.Text = string.Empty;
+                txtVista.Text = string.Empty;
+                
                 ScriptManager.RegisterStartupScript(this,
                     this.GetType(), "LaunchServerSide", "$(function() {openModalMantenimiento(); } );", true);
             }
@@ -209,7 +147,7 @@ namespace AppIBULACIT.Views
 
                 lblStatus.Text = "Hubo un error al cargar el modal";
                 lblStatus.Visible = true;
-            }*/
+            }
         }
 
         protected async void btnAceptarModal_Click(object sender, EventArgs e)
@@ -259,7 +197,7 @@ namespace AppIBULACIT.Views
         }
 
         protected async void btnAceptarMant_Click(object sender, EventArgs e)
-        {/*
+        {
             try
             {
 
@@ -269,35 +207,30 @@ namespace AppIBULACIT.Views
                     Estadistica estadistica = new Estadistica()
                     {
                         CodigoUsuario = Convert.ToInt32(txtCodigoUsuario.Text),
-                        CodigoMoneda = Convert.ToInt32(ddlCodigoMoneda.SelectedValue),
-                        Descripcion = txtDescripcion.Text,
-                        IBAN = txtIban.Text,
-                        Saldo = Convert.ToDecimal(txtSaldo.Text),
-                        Estado = ddlEstadoMant.SelectedValue
+                        FechaHora = Convert.ToDateTime(txtFechaHora.Text),
+                        Navegador = txtNavegador.Text,
+                        PlataformaDispositivo = txtNavegador.Text,
+                        FabricanteDispositivo = txtFabricante.Text,
+                        Vista = txtVista.Text,
+                        Accion = txtAccion.Text
                     };
 
                     Estadistica estadisticaIngresada = await estadisticaManager.Ingresar(estadistica, Session["Token"].ToString());
 
-                    if (!string.IsNullOrEmpty(estadisticaIngresada.Descripcion))
+                    if (!string.IsNullOrEmpty(estadisticaIngresada.Navegador))
                     {
-                        lblResultado.Text = "Estadistica ingresada con exito";
-                        lblResultado.Visible = true;
-                        lblResultado.ForeColor = Color.Green;
-                        btnAceptarMant.Visible = false;
+                        openModal("Estadistica ingresada", false);
                         InicializarControles();
 
                         Correo correo = new Correo();
-                        correo.Enviar("Nueva estadistica incluida", estadistica.Descripcion, "testrolandocerdas@gmail.com", Convert.ToInt32(Session["CodigoUsuario"].ToString()), "Estadistica");
+                        correo.Enviar("Nueva estadistica incluida", estadistica.Accion, "testrolandocerdas@gmail.com", Convert.ToInt32(Session["CodigoUsuario"].ToString()), "Estadistica");
                     }
                     else
                     {
-                        lblResultado.Text = "Hubo un error al efectuar la operacion";
-                        lblResultado.Visible = true;
-                        lblResultado.ForeColor = Color.Maroon;
-
+                        openModal("No se pudo ingresar la estadistica", false);
                     }
                 }
-                else//Modificar
+                /*else//Modificar
                 {
                     IngresarEstadistica("btnAceptarMant_Click modificar");
                     Estadistica estadistica = new Estadistica()
@@ -328,7 +261,7 @@ namespace AppIBULACIT.Views
                         lblResultado.Visible = true;
                         lblResultado.ForeColor = Color.Maroon;
                     }
-                }
+                }*/
             }
             catch (Exception ex)
             {
@@ -346,7 +279,7 @@ namespace AppIBULACIT.Views
                 };
                 Error errorIngresado = await errorManager.Ingresar(error);
 
-            }*/
+            }
         }
 
         protected void btnCancelarMant_Click(object sender, EventArgs e)

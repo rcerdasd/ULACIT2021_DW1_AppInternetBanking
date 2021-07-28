@@ -150,22 +150,22 @@ namespace AppIBULACIT.Views
         protected global::System.Web.UI.WebControls.RequiredFieldValidator RequiredFieldValidator1;
 
         /// <summary>
-        /// ltrFuente control.
+        /// ltrNavegador control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal ltrFuente;
+        protected global::System.Web.UI.WebControls.Literal ltrNavegador;
 
         /// <summary>
-        /// txtFuente control.
+        /// txtNavegador control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtFuente;
+        protected global::System.Web.UI.WebControls.TextBox txtNavegador;
 
         /// <summary>
         /// rfvFuente control.
@@ -177,22 +177,22 @@ namespace AppIBULACIT.Views
         protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvFuente;
 
         /// <summary>
-        /// ltrNumero control.
+        /// ltrPlataforma control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal ltrNumero;
+        protected global::System.Web.UI.WebControls.Literal ltrPlataforma;
 
         /// <summary>
-        /// txtNumero control.
+        /// txtPlataforma control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtNumero;
+        protected global::System.Web.UI.WebControls.TextBox txtPlataforma;
 
         /// <summary>
         /// rfvNumero control.
@@ -204,22 +204,22 @@ namespace AppIBULACIT.Views
         protected global::System.Web.UI.WebControls.RequiredFieldValidator rfvNumero;
 
         /// <summary>
-        /// trlDescripcion control.
+        /// ltrFabricante control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.Literal trlDescripcion;
+        protected global::System.Web.UI.WebControls.Literal ltrFabricante;
 
         /// <summary>
-        /// txtDescripcion control.
+        /// txtFabricante control.
         /// </summary>
         /// <remarks>
         /// Auto-generated field.
         /// To modify move field declaration from designer file to code-behind file.
         /// </remarks>
-        protected global::System.Web.UI.WebControls.TextBox txtDescripcion;
+        protected global::System.Web.UI.WebControls.TextBox txtFabricante;
 
         /// <summary>
         /// RequiredFieldValidator2 control.
