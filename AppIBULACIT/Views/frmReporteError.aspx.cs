@@ -38,7 +38,7 @@ namespace AppIBULACIT.Views
             }
         }
 
-        private async void InicializarControles()
+        private void InicializarControles()
         {
             try
             {

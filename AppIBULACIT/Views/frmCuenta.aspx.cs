@@ -7,6 +7,7 @@ using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Threading.Tasks;
 using System.Web;
 using System.Web.UI;
@@ -22,8 +23,10 @@ namespace AppIBULACIT.Views
         MonedaManager monedaManager = new MonedaManager();
         IEnumerable<Moneda> monedas = new ObservableCollection<Moneda>();
 
-        
 
+        public string labelsGraficoVistasGlobal = string.Empty;
+        public string dataGraficoVistasGlobal = string.Empty;
+        public string backgroundcolorsGraficoVistasGlobal = string.Empty;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -38,11 +41,38 @@ namespace AppIBULACIT.Views
             }
         }
 
+        protected void ObtenerGrafico()
+        {
+            StringBuilder script = new StringBuilder();
+            StringBuilder labelsGraficoVistas = new StringBuilder();
+            StringBuilder dataGraficoVistas = new StringBuilder();
+            StringBuilder backgroundColorGraficoVistas = new StringBuilder();
+
+            var random = new Random();
+
+            foreach (var cuenta in cuentas.GroupBy(info => info.CodigoMoneda).Select(group => new
+            {
+                Moneda = group.Key,
+                Cantidad = group.Count()
+            }).OrderBy(x => x.Moneda))
+            {
+                string color = String.Format("#{0:x6}", random.Next(0x1000000));
+                labelsGraficoVistas.Append(string.Format("'{0}',", cuenta.Moneda));
+                dataGraficoVistas.Append(string.Format("'{0}',", cuenta.Cantidad));
+                backgroundColorGraficoVistas.Append(string.Format("'{0}',", color));
+
+                labelsGraficoVistasGlobal = labelsGraficoVistas.ToString().Substring(0, labelsGraficoVistas.Length - 1);
+                backgroundcolorsGraficoVistasGlobal = backgroundColorGraficoVistas.ToString().Substring(0, backgroundColorGraficoVistas.Length - 1);
+                dataGraficoVistasGlobal = dataGraficoVistas.ToString().Substring(0, dataGraficoVistas.Length - 1);
+            }
+        }
+
         protected async void InicializarControles()
         {
             try
             {
                 cuentas = await cuentaManager.ObtenerCuentasUsuario(Session["Token"].ToString(),Session["CodigoUsuario"].ToString());
+                ObtenerGrafico();
                 gvCuentas.DataSource = cuentas.ToList();
                 gvCuentas.DataBind();
             }

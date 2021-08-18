@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -17,7 +18,9 @@ namespace AppIBULACIT.Views
         IEnumerable<Estadistica> estadisticas = new ObservableCollection<Estadistica>();
         EstadisticaManager estadisticaManager = new EstadisticaManager();
 
-
+        public string labelsGraficoVistasGlobal = string.Empty;
+        public string dataGraficoVistasGlobal = string.Empty;
+        public string backgroundcolorsGraficoVistasGlobal = string.Empty;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -45,6 +48,7 @@ namespace AppIBULACIT.Views
             try
             {
                 estadisticas = await estadisticaManager.ObtenerEstadisticas(Session["Token"].ToString());
+                ObtenerGrafico();
                 gvEstadisticas.DataSource = estadisticas.ToList();
                 gvEstadisticas.DataBind();
             }
@@ -286,6 +290,32 @@ namespace AppIBULACIT.Views
         {
             ScriptManager.RegisterStartupScript(this, this.GetType(), "LaunchServerSide", "$(function() { CloseMantenimiento(); });", true);
             IngresarEstadistica("btnCancelarMant_Click");
+        }
+
+        protected void ObtenerGrafico()
+        {
+            StringBuilder script = new StringBuilder();
+            StringBuilder labelsGraficoVistas = new StringBuilder();
+            StringBuilder dataGraficoVistas = new StringBuilder();
+            StringBuilder backgroundColorGraficoVistas = new StringBuilder();
+
+            var random = new Random();
+
+            foreach (var usuario in estadisticas.GroupBy(info => info.Accion).Select(group => new
+            {
+                Accion = group.Key,
+                Cantidad = group.Count()
+            }).OrderBy(x => x.Accion))
+            {
+                string color = String.Format("#{0:x6}", random.Next(0x1000000));
+                labelsGraficoVistas.Append(string.Format("'{0}',", usuario.Accion));
+                dataGraficoVistas.Append(string.Format("'{0}',", usuario.Cantidad));
+                backgroundColorGraficoVistas.Append(string.Format("'{0}',", color));
+
+                labelsGraficoVistasGlobal = labelsGraficoVistas.ToString().Substring(0, labelsGraficoVistas.Length - 1);
+                backgroundcolorsGraficoVistasGlobal = backgroundColorGraficoVistas.ToString().Substring(0, backgroundColorGraficoVistas.Length - 1);
+                dataGraficoVistasGlobal = dataGraficoVistas.ToString().Substring(0, dataGraficoVistas.Length - 1);
+            }
         }
     }
 }

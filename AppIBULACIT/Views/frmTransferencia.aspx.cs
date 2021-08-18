@@ -6,6 +6,7 @@ using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Globalization;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -20,6 +21,9 @@ namespace AppIBULACIT.Views
         IEnumerable<Cuenta> cuentas = new ObservableCollection<Cuenta>();
         CuentaManager cuentaManager = new CuentaManager();
 
+        public string labelsGraficoVistasGlobal = string.Empty;
+        public string dataGraficoVistasGlobal = string.Empty;
+        public string backgroundcolorsGraficoVistasGlobal = string.Empty;
         protected void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
@@ -39,6 +43,7 @@ namespace AppIBULACIT.Views
             try
             {
                 transferencias = await transferenciaManager.ObtenerTransferencias(Session["Token"].ToString());
+                ObtenerGrafico();
                 gvTransferencias.DataSource = transferencias.ToList();
                 gvTransferencias.DataBind();
 
@@ -197,6 +202,7 @@ namespace AppIBULACIT.Views
         {
             ScriptManager.RegisterStartupScript(this, this.GetType(), "LaunchServerSide", "$(function() { CloseModal(); });", true);
             IngresarEstadistica("btnCancelarModal_Click");
+            ObtenerGrafico();
         }
 
         protected async void btnAceptarMant_Click(object sender, EventArgs e)
@@ -314,6 +320,33 @@ namespace AppIBULACIT.Views
         {
             ScriptManager.RegisterStartupScript(this, this.GetType(), "LaunchServerSide", "$(function() { CloseMantenimiento(); });", true);
             IngresarEstadistica("btnCancelarMant_Click");
+            ObtenerGrafico();
+        }
+
+        protected void ObtenerGrafico()
+        {
+            StringBuilder script = new StringBuilder();
+            StringBuilder labelsGraficoVistas = new StringBuilder();
+            StringBuilder dataGraficoVistas = new StringBuilder();
+            StringBuilder backgroundColorGraficoVistas = new StringBuilder();
+
+            var random = new Random();
+
+            foreach (var usuario in transferencias.GroupBy(info => info.CuentaOrigen).Select(group => new
+            {
+                CuentaOrigen = group.Key,
+                Cantidad = group.Count()
+            }).OrderBy(x => x.CuentaOrigen))
+            {
+                string color = String.Format("#{0:x6}", random.Next(0x1000000));
+                labelsGraficoVistas.Append(string.Format("'{0}',", usuario.CuentaOrigen));
+                dataGraficoVistas.Append(string.Format("'{0}',", usuario.Cantidad));
+                backgroundColorGraficoVistas.Append(string.Format("'{0}',", color));
+
+                labelsGraficoVistasGlobal = labelsGraficoVistas.ToString().Substring(0, labelsGraficoVistas.Length - 1);
+                backgroundcolorsGraficoVistasGlobal = backgroundColorGraficoVistas.ToString().Substring(0, backgroundColorGraficoVistas.Length - 1);
+                dataGraficoVistasGlobal = dataGraficoVistas.ToString().Substring(0, dataGraficoVistas.Length - 1);
+            }
         }
     }
 }

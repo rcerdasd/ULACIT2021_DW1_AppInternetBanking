@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -23,8 +24,10 @@ namespace AppIBULACIT.Views
         CuentaManager cuentaManager = new CuentaManager();
         IEnumerable<Cuenta> cuentas = new ObservableCollection<Cuenta>();
 
-
-        protected void Page_Load(object sender, EventArgs e)
+        public string labelsGraficoVistasGlobal = string.Empty;
+        public string dataGraficoVistasGlobal = string.Empty;
+        public string backgroundcolorsGraficoVistasGlobal = string.Empty;
+        protected async void Page_Load(object sender, EventArgs e)
         {
             if (!IsPostBack)
             {
@@ -32,7 +35,11 @@ namespace AppIBULACIT.Views
                     Response.Redirect("~/Login.aspx");
                 else
                 {
+
+                    pagos = await pagoManager.ObtenerPagos(Session["Token"].ToString());
                     InicializarControles();
+                    
+                    ObtenerGrafico();
                 }
             }
         }
@@ -42,6 +49,7 @@ namespace AppIBULACIT.Views
             try
             {
                 pagos = await pagoManager.ObtenerPagos(Session["Token"].ToString());
+                ObtenerGrafico();
                 gvPagos.DataSource = pagos.ToList();
                 gvPagos.DataBind();
 
@@ -56,6 +64,7 @@ namespace AppIBULACIT.Views
                 ddlCodigoServicio.DataTextField = "Descripcion";
                 ddlCodigoServicio.DataValueField = "Codigo";
                 ddlCodigoServicio.DataBind();
+                
 
             }
             catch (Exception ex)
@@ -305,5 +314,32 @@ namespace AppIBULACIT.Views
             ScriptManager.RegisterStartupScript(this, this.GetType(), "LaunchServerSide", "$(function() { CloseMantenimiento(); });", true);
             IngresarEstadistica("btnCancelarMant_Click");
         }
+
+        protected void ObtenerGrafico()
+        {
+            StringBuilder script = new StringBuilder();
+            StringBuilder labelsGraficoVistas = new StringBuilder();
+            StringBuilder dataGraficoVistas = new StringBuilder();
+            StringBuilder backgroundColorGraficoVistas = new StringBuilder();
+
+            var random = new Random();
+
+            foreach(var pago in pagos.GroupBy(info => info.CodigoCuenta).Select(group => new
+            {
+                CuentaCodigo = group.Key,
+                Cantidad = group.Count()
+            }).OrderBy(x => x.CuentaCodigo))
+            {
+                string color = String.Format("#{0:x6}", random.Next(0x1000000));
+                labelsGraficoVistas.Append(string.Format("'{0}',", pago.CuentaCodigo));
+                dataGraficoVistas.Append(string.Format("'{0}',", pago.Cantidad));
+                backgroundColorGraficoVistas.Append(string.Format("'{0}',", color));
+
+                labelsGraficoVistasGlobal = labelsGraficoVistas.ToString().Substring(0, labelsGraficoVistas.Length - 1);
+                backgroundcolorsGraficoVistasGlobal = backgroundColorGraficoVistas.ToString().Substring(0, backgroundColorGraficoVistas.Length - 1);
+                dataGraficoVistasGlobal = dataGraficoVistas.ToString().Substring(0, dataGraficoVistas.Length - 1);
+            }
+        }
+
     }
 }

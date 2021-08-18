@@ -47,31 +47,31 @@
     </asp:GridView>
     <asp:Label ID="lblStatus" ForeColor="Maroon" runat="server" Visible="false" />
 
-        <div class="row">
-            <div class="col-sm">
-     <div id="canvas-holder" style="width:40%">
-		            <canvas id="vistas-chart"></canvas>
-	            </div>
-              <script >
-                  new Chart(document.getElementById("vistas-chart"), {
-                      type: 'pie',
-                      data: {
-                          labels: [<%= this.labelsGraficoVistasGlobal %>],
-                        datasets: [{
-                            label: "Errores por vista",
-                            backgroundColor: [<%= this.backgroundcolorsGraficoVistasGlobal %>],
-                        data: [<%= this.dataGraficoVistasGlobal %>]
-                            }]
-                        },
-                        options: {
-                            title: {
-                                display: true,
-                                text: 'Errores por vista'
-                            }
-                        }
-                    });
-              </script>
-                </div>
+    <div class="row">
+        <div class="col-sm">
+            <div id="canvas-holder" style="width: 40%">
+                <canvas id="vistas-chart"></canvas>
             </div>
+            <script>
+                new Chart(document.getElementById("vistas-chart"), {
+                    type: 'pie',
+                    data: {
+                        labels: [<%= this.labelsGraficoVistasGlobal %>],
+                          datasets: [{
+                              label: "Errores por vista",
+                              backgroundColor: [<%= this.backgroundcolorsGraficoVistasGlobal %>],
+                            data: [<%= this.dataGraficoVistasGlobal %>]
+                          }]
+                      },
+                      options: {
+                          title: {
+                              display: true,
+                              text: 'Errores por vista'
+                          }
+                      }
+                  });
+            </script>
+        </div>
+    </div>
 
 </asp:Content>

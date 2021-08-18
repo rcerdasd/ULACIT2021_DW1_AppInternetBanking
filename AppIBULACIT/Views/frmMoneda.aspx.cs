@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -16,6 +17,11 @@ namespace AppIBULACIT.Views
 
         IEnumerable<Moneda> monedas = new ObservableCollection<Moneda>();
         MonedaManager monedaManager = new MonedaManager();
+
+        public string labelsGraficoVistasGlobal = string.Empty;
+        public string dataGraficoVistasGlobal = string.Empty;
+        public string backgroundcolorsGraficoVistasGlobal = string.Empty;
+
 
         protected void Page_Load(object sender, EventArgs e)
         {
@@ -31,11 +37,38 @@ namespace AppIBULACIT.Views
             }
         }
 
+        protected void ObtenerGrafico()
+        {
+            StringBuilder script = new StringBuilder();
+            StringBuilder labelsGraficoVistas = new StringBuilder();
+            StringBuilder dataGraficoVistas = new StringBuilder();
+            StringBuilder backgroundColorGraficoVistas = new StringBuilder();
+
+            var random = new Random();
+
+            foreach (var moneda in monedas.GroupBy(info => info.Descripcion).Select(group => new
+            {
+                Moneda = group.Key,
+                Cantidad = group.Count()
+            }).OrderBy(x => x.Moneda))
+            {
+                string color = String.Format("#{0:x6}", random.Next(0x1000000));
+                labelsGraficoVistas.Append(string.Format("'{0}',", moneda.Moneda));
+                dataGraficoVistas.Append(string.Format("'{0}',", moneda.Cantidad));
+                backgroundColorGraficoVistas.Append(string.Format("'{0}',", color));
+
+                labelsGraficoVistasGlobal = labelsGraficoVistas.ToString().Substring(0, labelsGraficoVistas.Length - 1);
+                backgroundcolorsGraficoVistasGlobal = backgroundColorGraficoVistas.ToString().Substring(0, backgroundColorGraficoVistas.Length - 1);
+                dataGraficoVistasGlobal = dataGraficoVistas.ToString().Substring(0, dataGraficoVistas.Length - 1);
+            }
+        }
+
         protected async void InicializarControles()
         {
             try
             {
                 monedas = await monedaManager.ObtenerMonedas(Session["Token"].ToString());
+                ObtenerGrafico();
                 gvMonedas.DataSource = monedas.ToList();
                 gvMonedas.DataBind();
             }
